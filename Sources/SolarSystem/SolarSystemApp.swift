@@ -9,8 +9,8 @@ class SolarSystemApp {
   let windowTitle = "Solard System"
   let windowResolution = (width: Int32(640), height: Int32(360))
 
-  let text = "Solar System"
-  let textFontSize: Int32 = 30
+  let text = "Like you..."
+  let textFontSize: Int32 = 20
   let textPosition: (x: Int32, y: Int32)
 
   init() {

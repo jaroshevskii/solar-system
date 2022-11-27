@@ -14,7 +14,10 @@ let package = Package(
     // Targets can depend on other targets in this package, and on products in packages this package depends on.
     .executableTarget(
       name: "SolarSystem",
-      dependencies: ["Raylib"]
+      dependencies: ["Raylib"],
+      resources: [
+        .process("Resources")
+      ]
     )
   ]
 )

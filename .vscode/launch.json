@@ -1,0 +1,22 @@
+{
+  "configurations": [
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Debug SolarSystem",
+      "program": "${workspaceFolder:solar-system}/.build/debug/SolarSystem",
+      "args": [],
+      "cwd": "${workspaceFolder:solar-system}",
+      "preLaunchTask": "swift: Build Debug SolarSystem"
+    },
+    {
+      "type": "lldb",
+      "request": "launch",
+      "name": "Release SolarSystem",
+      "program": "${workspaceFolder:solar-system}/.build/release/SolarSystem",
+      "args": [],
+      "cwd": "${workspaceFolder:solar-system}",
+      "preLaunchTask": "swift: Build Release SolarSystem"
+    }
+  ]
+}

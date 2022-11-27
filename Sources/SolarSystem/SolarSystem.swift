@@ -14,7 +14,7 @@ class SolarSystemApp {
   let textPosition: (x: Int32, y: Int32)
 
   var camera = Camera3D(
-    position: Vector3(x: 10.0, y: 1.0, z: 10.0),
+    position: Vector3(x: 5.0, y: 1.0, z: 5.0),
     target: Vector3(x: 0.0, y: 0.0, z: 0.0),
     up: Vector3(x: 0.0, y: 1.0, z: 0.0),
     fovy: 45.0,
@@ -26,16 +26,20 @@ class SolarSystemApp {
   var sphere = (
     position: Vector3(x: 0.0, y: 0.0, z: 0.0),
     radius: Float(1.0),
-    rings: Int32(0),
-    slices: Int32(0),
+    rings: Int32(16),
+    slices: Int32(28),
     color: Color.blue,
     wiresColor: Color.skyBlue
   )
 
+  var sphereScreenPosition = Vector2()
+
+  let model: Model
+
   init() {
     Raylib.setConfigFlags([
-      .vsyncHint
-      // .msaa4xHint,
+      .vsyncHint,
+      .msaa4xHint,
       // .fullscreenMode,
     ])
     Raylib.initWindow(windowResolution.width, windowResolution.height, windowTitle)
@@ -45,10 +49,25 @@ class SolarSystemApp {
       x: (windowResolution.width - Raylib.measureText(text, textFontSize)) / 2,
       y: 8
     )
+
+    if let modelPath = Bundle.module.path(forResource: "LowPolyEarth", ofType: "obj") {
+      model = Raylib.loadModel(modelPath)
+    } else {
+      model = Model()
+    }
   }
 
-  deinit {
-    Raylib.closeWindow()
+  static func main() {
+    let solarSystemApp = SolarSystemApp()
+    solarSystemApp.run()
+  }
+
+  func run() {
+    while !Raylib.windowShouldClose {
+      input()
+      update(deltaTime: Raylib.getFrameTime())
+      draw()
+    }
   }
 
   func input() {
@@ -60,6 +79,14 @@ class SolarSystemApp {
 
   func update(deltaTime: Float) {
     Raylib.updateCamera(&camera)
+
+    sphereScreenPosition = Raylib.getWorldToScreen(
+      Vector3(
+        x: sphere.position.x,
+        y: sphere.position.y + 1.0,
+        z: sphere.position.z
+      ),
+      camera)
   }
 
   func draw() {
@@ -73,10 +100,13 @@ class SolarSystemApp {
     // Raylib.drawSphere(spherePosition, 1.0, .blue)
     // Raylib.drawSphereWires(spherePosition, 1.0, 16, 0, .skyBlue)
 
-    Raylib.drawSphereEx(
-      sphere.position, sphere.radius, sphere.rings, sphere.slices, sphere.color)
-    Raylib.drawSphereWires(
-      sphere.position, sphere.radius, sphere.rings, sphere.slices, sphere.wiresColor)
+    // Raylib.drawSphereEx(
+    //   sphere.position, sphere.radius, sphere.rings, sphere.slices, sphere.color)
+    // Raylib.drawSphereWires(
+    //   sphere.position, sphere.radius, sphere.rings, sphere.slices, sphere.wiresColor)
+
+    Raylib.drawModel(model, sphere.position, 1.0, .white)
+    Raylib.drawModelWires(model, sphere.position, 1.0, .darkGray)
 
     // Raylib.drawSphere(centerPos: Vector3, radius: Float, color: Color)
     // Raylib.drawSphereWires(centerPos: Vector3, radius: Float, rings: Int32, slices: Int32, color: Color)
@@ -85,6 +115,10 @@ class SolarSystemApp {
     Raylib.drawGrid(16, 1.0)
 
     Raylib.endMode3D()
+
+    // DrawText("Enemy: 100 / 100", (int)cubeScreenPosition.x - MeasureText("Enemy: 100/100", 20)/2, (int)cubeScreenPosition.y, 20, BLACK);
+    // Raylib.drawText(
+    //   "Sphere", Int32(sphereScreenPosition.x) - Raylib.measureText("Sphere", 20) / 2, Int32(sphereScreenPosition.y) - 20, 20, .green)
 
     Raylib.drawFPS(8, 8)
     Raylib.drawText(
@@ -97,16 +131,8 @@ class SolarSystemApp {
     Raylib.endDrawing()
   }
 
-  func run() {
-    while !Raylib.windowShouldClose {
-      input()
-      update(deltaTime: Raylib.getFrameTime())
-      draw()
-    }
-  }
-
-  static func main() {
-    let solarSystemApp = SolarSystemApp()
-    solarSystemApp.run()
+  deinit {
+    Raylib.unloadModel(model)
+    Raylib.closeWindow()
   }
 }

@@ -7,54 +7,33 @@ import Raylib
 @main
 class SolarSystemApp {
   let windowTitle = "Solard System"
-  let windowResolution: (width: Int32, height: Int32) = (960, 540)
-
-  let text = "OMG..."
-  let textFontSize: Int32 = 20
-  let textPosition: (x: Int32, y: Int32)
+  let windowResolution = (width: Int32(960), height: Int32(540))
 
   var camera = Camera3D(
-    position: Vector3(x: 5.0, y: 1.0, z: 5.0),
-    target: Vector3(x: 0.0, y: 0.0, z: 0.0),
-    up: Vector3(x: 0.0, y: 1.0, z: 0.0),
-    fovy: 45.0,
+    position: Vector3(x: 5, y: 1, z: 5),
+    target: Vector3(x: 0, y: 0, z: 0),
+    up: Vector3(x: 0, y: 1, z: 0),
+    fovy: 45,
     _projection: CameraProjection.perspective.rawValue
   )
 
-  let cubePosition = Vector3(x: 0.0, y: 0.0, z: 0.0)
-
-  var sphere = (
-    position: Vector3(x: 0.0, y: 0.0, z: 0.0),
-    radius: Float(1.0),
-    rings: Int32(16),
-    slices: Int32(28),
-    color: Color.blue,
-    wiresColor: Color.skyBlue
-  )
-
-  var sphereScreenPosition = Vector2()
-
-  let model: Model
+  var earth: Planet
 
   init() {
     Raylib.setConfigFlags([
       .vsyncHint,
-      .msaa4xHint,
-      // .fullscreenMode,
+      .msaa4xHint
     ])
     Raylib.initWindow(windowResolution.width, windowResolution.height, windowTitle)
     Raylib.setCameraMode(camera, .free)
 
-    textPosition = (
-      x: (windowResolution.width - Raylib.measureText(text, textFontSize)) / 2,
-      y: 8
+    earth = Planet(
+      name: "Earth",
+      model: Raylib.loadModel(Bundle.module.path(forResource: "LowPolyEarth", ofType: "obj")!),
+      position: Vector3(x: 0, y: 0, z: 0),
+      rotationAxis: Vector3(x: 0, y: 1, z: 0),
+      scale: Vector3(x: 1, y: 1, z: 1)
     )
-
-    if let modelPath = Bundle.module.path(forResource: "LowPolyEarth", ofType: "obj") {
-      model = Raylib.loadModel(modelPath)
-    } else {
-      model = Model()
-    }
   }
 
   static func main() {
@@ -71,68 +50,49 @@ class SolarSystemApp {
   }
 
   func input() {
-    if Raylib.isKeyPressed(.up) { sphere.slices += 1 }
-    if Raylib.isKeyPressed(.down) { sphere.slices -= 1 }
-    if Raylib.isKeyPressed(.right) { sphere.rings += 1 }
-    if Raylib.isKeyPressed(.left) { sphere.rings -= 1 }
+    if Raylib.isKeyPressed(.letterV) {
+      if Raylib.isWindowState(.vsyncHint) {
+        Raylib.clearWindowState(.vsyncHint)
+      } else {
+        Raylib.setWindowState(.vsyncHint)
+      }
+    }
   }
 
   func update(deltaTime: Float) {
-    Raylib.updateCamera(&camera)
+    earth.rotationAngle += 30 * deltaTime
 
-    sphereScreenPosition = Raylib.getWorldToScreen(
-      Vector3(
-        x: sphere.position.x,
-        y: sphere.position.y + 1.0,
-        z: sphere.position.z
-      ),
-      camera)
+    if earth.rotationAngle >= 360 {
+      earth.rotationAngle -= 360
+    }
+
+    Raylib.updateCamera(&camera)
   }
 
   func draw() {
-    Raylib.beginDrawing()
-    Raylib.clearBackground(.black)
+    Raylib.draw {
+      Raylib.clearBackground(.black)
 
-    Raylib.beginMode3D(camera)
+      camera.mode3D {
+        earth.draw()
+        Raylib.drawGrid(16, 1)
+      }
 
-    // Raylib.drawCube(cubePosition, 2.0, 2.0, 2.0, .red)
-    // Raylib.drawCubeWires(cubePosition, 2.0, 2.0, 2.0, .maroon)
-    // Raylib.drawSphere(spherePosition, 1.0, .blue)
-    // Raylib.drawSphereWires(spherePosition, 1.0, 16, 0, .skyBlue)
+      Raylib.drawFPS(8, 8)
+      Raylib.drawText(
+        """
+        VSync: \(Raylib.isWindowState(.vsyncHint))
+        MSAA 4x: \(Raylib.isWindowState(.msaa4xHint))
 
-    // Raylib.drawSphereEx(
-    //   sphere.position, sphere.radius, sphere.rings, sphere.slices, sphere.color)
-    // Raylib.drawSphereWires(
-    //   sphere.position, sphere.radius, sphere.rings, sphere.slices, sphere.wiresColor)
-
-    Raylib.drawModel(model, sphere.position, 1.0, .white)
-    Raylib.drawModelWires(model, sphere.position, 1.0, .darkGray)
-
-    // Raylib.drawSphere(centerPos: Vector3, radius: Float, color: Color)
-    // Raylib.drawSphereWires(centerPos: Vector3, radius: Float, rings: Int32, slices: Int32, color: Color)
-    // Raylib.drawSphereEx(centerPos: Vector3, radius: Float, rings: Int32, slices: Int32, color: Color)
-
-    Raylib.drawGrid(16, 1.0)
-
-    Raylib.endMode3D()
-
-    // DrawText("Enemy: 100 / 100", (int)cubeScreenPosition.x - MeasureText("Enemy: 100/100", 20)/2, (int)cubeScreenPosition.y, 20, BLACK);
-    // Raylib.drawText(
-    //   "Sphere", Int32(sphereScreenPosition.x) - Raylib.measureText("Sphere", 20) / 2, Int32(sphereScreenPosition.y) - 20, 20, .green)
-
-    Raylib.drawFPS(8, 8)
-    Raylib.drawText(
-      """
-      Sphere:
-          Rings: \(sphere.rings)
-          Slices: \(sphere.slices)
-      """, 8, 8 + 20 + 8, 10, .red)
-
-    Raylib.endDrawing()
+        \(earth.name):
+            Rotation axis: \(earth.rotationAxis)
+            Rotation angle: \(earth.rotationAngle)
+        """, 8, 8 + 20 + 8, 10, .red)
+    }
   }
 
   deinit {
-    Raylib.unloadModel(model)
+    Raylib.unloadModel(earth.model)
     Raylib.closeWindow()
   }
 }

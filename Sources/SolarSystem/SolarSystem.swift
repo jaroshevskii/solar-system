@@ -2,6 +2,7 @@
 // Solar System
 //
 
+import Foundation
 import Raylib
 
 @main
@@ -22,7 +23,7 @@ class SolarSystemApp {
   init() {
     Raylib.setConfigFlags([
       .vsyncHint,
-      .msaa4xHint
+      .msaa4xHint,
     ])
     Raylib.initWindow(windowResolution.width, windowResolution.height, windowTitle)
     Raylib.setCameraMode(camera, .free)
@@ -30,7 +31,7 @@ class SolarSystemApp {
     earth = Planet(
       name: "Earth",
       model: Raylib.loadModel(Bundle.module.path(forResource: "LowPolyEarth", ofType: "obj")!),
-      position: Vector3(x: 0, y: 0, z: 0),
+      position: Vector3(x: 4, y: 0, z: 0),
       rotationAxis: Vector3(x: 0, y: 1, z: 0),
       scale: Vector3(x: 1, y: 1, z: 1)
     )
@@ -66,6 +67,10 @@ class SolarSystemApp {
       earth.rotationAngle -= 360
     }
 
+    let angle = earth.rotationAngle * Float.pi / 180
+    earth.position.x = 0 + 4 * cos(angle)
+    earth.position.z = 0 + 4 * sin(angle)
+
     Raylib.updateCamera(&camera)
   }
 
@@ -74,7 +79,21 @@ class SolarSystemApp {
       Raylib.clearBackground(.black)
 
       camera.mode3D {
+        // Sun.
+        Raylib.drawSphere(Vector3(), 2, .gold)
+
         earth.draw()
+
+        // Mon.
+        Raylib.drawSphere(
+          Vector3(
+            x: earth.position.x + 1.5 * cos((earth.rotationAngle * 4) * Float.pi / 180),
+            y: 0,
+            z: earth.position.z + 1.5 * sin((earth.rotationAngle * 4) * Float.pi / 180)
+          ),
+          0.25, .gray
+        )
+
         Raylib.drawGrid(16, 1)
       }
 
@@ -85,6 +104,7 @@ class SolarSystemApp {
         MSAA 4x: \(Raylib.isWindowState(.msaa4xHint))
 
         \(earth.name):
+            Position: \(earth.position)
             Rotation axis: \(earth.rotationAxis)
             Rotation angle: \(earth.rotationAngle)
         """, 8, 8 + 20 + 8, 10, .red)

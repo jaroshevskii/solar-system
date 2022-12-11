@@ -322,7 +322,7 @@ class SolarSystemApp {
         let keysDescription = """
           Close the program window.
           Show/close help.
-          Enable/disable planet rotation.
+          Enable/disable planet spin.
           Enable/disable planet view mode.
           Switch planet (view mode).
           Switch the planet in the reverse direction (view mode).

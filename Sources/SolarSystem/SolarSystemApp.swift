@@ -295,7 +295,7 @@ class SolarSystemApp {
         Raylib.drawText(text, textPositionX + 1, textPositionY + 1, fontSize, .black)
         Raylib.drawText(text, textPositionX, textPositionY, fontSize, .white)
 
-        let name = planets[tabIndex].name.uppercased() + ": "
+        let name = planets[tabIndex].name.uppercased() + ":  "
         let namePositionX = textPositionX - Raylib.measureText(name, fontSize)
 
         Raylib.drawText(name, namePositionX + 1, textPositionY + 1, fontSize, .black)
@@ -352,7 +352,7 @@ class SolarSystemApp {
           "MW",
         ]
         for (index, key) in keys.enumerated() {
-          let keyText = "[  \(key)  ] - "
+          let keyText = "[  \(key)  ]  -  "
           let keyTextWidth = Raylib.measureText(keyText, fontSize)
           let keyTextPositionX = keysDescriptionPositionX - keyTextWidth
           let keyTextPositionY = keysDescriptionPositionY + (fontSize + fontSize / 2) * Int32(index)
@@ -367,20 +367,20 @@ class SolarSystemApp {
         Window:
             Resolution:
                 Width: \(window.width)
-                Height: \(window.height)
+                Height:  \(window.height)
             Config flags:
-                VSync: \(Raylib.isWindowState(.vsyncHint))
-                MSAA 4x: \(Raylib.isWindowState(.msaa4xHint))
+                VSync:  \(Raylib.isWindowState(.vsyncHint))
+                MSAA 4x:  \(Raylib.isWindowState(.msaa4xHint))
 
         Camera:
             Position:
-                X: \(camera.position.x)
-                Y: \(camera.position.y)
-                Z: \(camera.position.z)
+                X:  \(camera.position.x)
+                Y:  \(camera.position.y)
+                Z:  \(camera.position.z)
             Target:
-                X: \(camera.target.x)
-                Y: \(camera.target.y)
-                Z: \(camera.target.z)
+                X:  \(camera.target.x)
+                Y:  \(camera.target.y)
+                Z:  \(camera.target.z)
         """, 8, 8 + 20 + 8, 10, .red)
     }
   }

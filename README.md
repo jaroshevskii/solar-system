@@ -2,8 +2,8 @@
 
 An interactive app for visually exploring the solar system.
 
-![Screenshot](https://user-images.githubusercontent.com/72662383/206922572-1a35c2ae-c844-4f94-8de3-35579727ca84.png)
-![Screenshot](https://user-images.githubusercontent.com/72662383/206909335-e474c99d-f29e-4f6b-93a0-8735dd0f33b4.png)
+<img width="960" alt="image" src="https://github.com/jaroshevskii/solar-system/assets/72662383/39bc10cc-2906-403a-af1a-ffaf77f5edce">
+<img width="960" alt="image" src="https://github.com/jaroshevskii/solar-system/assets/72662383/460873e7-7d27-4ccc-b29a-688b0326ee54">
 
 ## Build
 
